@@ -92,6 +92,7 @@ Use Next.js Route Handlers (`app/api/.../route.ts`) only when a browser client n
 ## Development Notes
 
 - shadcn/ui components are added via `pnpm dlx shadcn@latest add <component>` — do not write them from scratch
+- **Prisma 7** splits config: the database URL lives in `prisma.config.ts` (for migrations) and a `PrismaPg` adapter is passed in `src/lib/db.ts` (for the client). Do NOT add `url` to `schema.prisma`. Generated client is at `src/generated/prisma`.
 - Prisma schema changes always require a migration (`pnpm db:migrate`) in dev; never use `db:push` in production
-- Environment variables: `.env.local` for local dev; configure the same vars in Vercel for production. Required vars: `DATABASE_URL`, `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+- Environment variables: `.env` for local dev; configure the same vars in Vercel for production. Required vars: `DATABASE_URL`, `CLERK_SECRET_KEY`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
 - Clerk webhook secret (`CLERK_WEBHOOK_SECRET`) is needed to sync Clerk users to the local `Patient`/`Clinician` tables

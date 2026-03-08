@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -11,4 +5,195 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Role {
+  ADMIN
+  CLINICIAN
+  RECEPTIONIST
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum AppointmentType {
+  INITIAL_EVALUATION
+  FOLLOW_UP
+  CRISIS
+  GROUP
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_TRANSFER
+  INSURANCE
+  OTHER
+}
+
+// ─── Staff ───────────────────────────────────────────────────────────────────
+
+model StaffMember {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique // Clerk user ID
+  role      Role
+  firstName String
+  lastName  String
+  email     String   @unique
+  phone     String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Clinicians only
+  licenseNumber String?
+  specialty     String?
+  bio           String?
+
+  appointments Appointment[]
+  notes        SessionNote[]
+
+  @@map("staff_members")
+}
+
+// ─── Patients ─────────────────────────────────────────────────────────────────
+
+model Patient {
+  id          String    @id @default(cuid())
+  clerkId     String?   @unique // Set when patient activates portal
+  firstName   String
+  lastName    String
+  email       String    @unique
+  phone       String?
+  dateOfBirth DateTime?
+  gender      Gender?
+  address     String?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Emergency contact
+  emergencyContactName  String?
+  emergencyContactPhone String?
+
+  // Insurance
+  insuranceProvider   String?
+  insurancePolicyNumber String?
+
+  appointments Appointment[]
+  invoices     Invoice[]
+
+  @@map("patients")
+}
+
+// ─── Appointments ─────────────────────────────────────────────────────────────
+
+model Appointment {
+  id          String            @id @default(cuid())
+  patientId   String
+  clinicianId String
+  startsAt    DateTime
+  endsAt      DateTime
+  type        AppointmentType   @default(FOLLOW_UP)
+  status      AppointmentStatus @default(SCHEDULED)
+  notes       String?           // Pre-appointment notes / reason for visit
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  patient    Patient     @relation(fields: [patientId], references: [id])
+  clinician  StaffMember @relation(fields: [clinicianId], references: [id])
+  sessionNote SessionNote?
+  invoiceItems InvoiceItem[]
+
+  @@map("appointments")
+}
+
+// ─── Session Notes ─────────────────────────────────────────────────────────────
+
+model SessionNote {
+  id            String   @id @default(cuid())
+  appointmentId String   @unique
+  clinicianId   String
+  content       String   // Clinical notes (rich text / markdown)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id])
+  clinician   StaffMember @relation(fields: [clinicianId], references: [id])
+
+  @@map("session_notes")
+}
+
+// ─── Billing ──────────────────────────────────────────────────────────────────
+
+model Invoice {
+  id        String        @id @default(cuid())
+  patientId String
+  status    InvoiceStatus @default(DRAFT)
+  issuedAt  DateTime      @default(now())
+  dueAt     DateTime
+  paidAt    DateTime?
+  notes     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  patient  Patient       @relation(fields: [patientId], references: [id])
+  items    InvoiceItem[]
+  payments Payment[]
+
+  // Computed total is derived from items in application logic
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id            String   @id @default(cuid())
+  invoiceId     String
+  appointmentId String?
+  description   String
+  quantity      Int      @default(1)
+  unitPrice     Decimal  @db.Decimal(10, 2)
+  createdAt     DateTime @default(now())
+
+  invoice     Invoice      @relation(fields: [invoiceId], references: [id])
+  appointment Appointment? @relation(fields: [appointmentId], references: [id])
+
+  @@map("invoice_items")
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  invoiceId String
+  amount    Decimal       @db.Decimal(10, 2)
+  method    PaymentMethod
+  paidAt    DateTime      @default(now())
+  reference String?       // e.g. transaction ID
+  notes     String?
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
+
+  @@map("payments")
 }

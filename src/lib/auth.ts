@@ -5,7 +5,7 @@ export type UserRole = "ADMIN" | "CLINICIAN" | "RECEPTIONIST" | "PATIENT";
 
 export async function getRole(): Promise<UserRole | null> {
   const { sessionClaims } = await auth();
-  return ((sessionClaims?.publicMetadata as { role?: UserRole })?.role) ?? null;
+  return ((sessionClaims?.metadata as { role?: UserRole })?.role) ?? null;
 }
 
 export async function requireRole(...roles: UserRole[]) {

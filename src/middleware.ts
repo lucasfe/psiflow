@@ -5,6 +5,8 @@ const isPublicRoute = createRouteMatcher([
   "/",
   "/sign-in(.*)",
   "/sign-up(.*)",
+  "/no-role",
+  "/debug",
   "/api/webhooks(.*)",
 ]);
 
@@ -20,7 +22,11 @@ export default clerkMiddleware(async (auth, req) => {
     return (await auth()).redirectToSignIn();
   }
 
-  const role = (sessionClaims?.publicMetadata as { role?: string })?.role;
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
+
+  if (!role) {
+    return NextResponse.redirect(new URL("/no-role", req.url));
+  }
 
   if (isClinicRoute(req) && role !== "ADMIN" && role !== "CLINICIAN" && role !== "RECEPTIONIST") {
     return NextResponse.redirect(new URL("/portal", req.url));

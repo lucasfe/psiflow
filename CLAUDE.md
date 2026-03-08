@@ -89,6 +89,45 @@ Core entities: `Patient`, `Clinician`, `Appointment`, `Invoice`, `Payment`, `Ses
 
 Use Next.js Route Handlers (`app/api/.../route.ts`) only when a browser client needs to call an endpoint directly (e.g., webhooks, file uploads, Clerk webhooks). Prefer Server Actions for form submissions and mutations from Client Components.
 
+## Git Flow
+
+### Branch Structure
+
+| Branch | Purpose |
+|---|---|
+| `main` | Production-ready code. Never commit directly. |
+| `develop` | Integration branch. All features merge here first. |
+| `feature/*` | New features — branch from `develop` |
+| `fix/*` | Bug fixes — branch from `develop` |
+| `hotfix/*` | Urgent production fixes — branch from `main`, PR into both `main` and `develop` |
+
+### Workflow for New Changes
+
+1. **Branch off `develop`**
+   ```bash
+   git checkout develop && git pull origin develop
+   git checkout -b feature/my-feature
+   ```
+
+2. **Work and commit** on your feature branch
+
+3. **Open a PR → `develop`** — CI (lint, typecheck, tests) must pass before merging
+
+4. **Open a PR → `main`** from `develop` when ready to release — CI must pass
+
+### Rules
+
+- Direct pushes to `main` and `develop` are blocked
+- All PRs require CI to pass before merge
+- Hotfixes branch from `main`, then get back-merged into `develop`
+
+### CI Pipeline
+
+GitHub Actions runs on every PR to `main` or `develop`:
+- `pnpm lint` — ESLint
+- `pnpm typecheck` — TypeScript type checking
+- `pnpm test` — Vitest unit tests
+
 ## Development Notes
 
 - shadcn/ui components are added via `pnpm dlx shadcn@latest add <component>` — do not write them from scratch

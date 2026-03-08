@@ -111,9 +111,14 @@ Use Next.js Route Handlers (`app/api/.../route.ts`) only when a browser client n
 
 2. **Work and commit** on your feature branch
 
-3. **Open a PR → `develop`** — CI (lint, typecheck, tests) must pass before merging
+3. **Run the pipeline locally before pushing** — must pass with no errors:
+   ```bash
+   pnpm lint && pnpm typecheck && pnpm test
+   ```
 
-4. **Open a PR → `main`** from `develop` when ready to release — CI must pass
+4. **Open a PR → `develop`** — CI (lint, typecheck, tests) must pass before merging
+
+5. **Open a PR → `main`** from `develop` when ready to release — CI must pass
 
 ### Rules
 

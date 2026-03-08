@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider afterSignInUrl="/" afterSignUpUrl="/">
+    <ClerkProvider>
       <html lang="en">
         <body className={`${geistSans.variable} antialiased`}>
           {children}

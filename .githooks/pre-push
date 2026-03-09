@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+
+echo "⏳ Checking lockfile is up to date..."
+pnpm install --frozen-lockfile --silent
+echo "✅ Lockfile OK"
+
+echo "⏳ Running lint, typecheck, and unit tests..."
+pnpm lint --quiet && pnpm typecheck && pnpm test
+echo "✅ Unit checks passed"
+
+echo "⏳ Running e2e acceptance tests..."
+# Visual snapshot tests are CI-only (baselines are Linux-generated).
+# Run only the auth acceptance tests locally; they are platform-independent.
+pnpm test:e2e e2e/auth.spec.ts
+echo "✅ All checks passed"

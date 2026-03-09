@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { DM_Serif_Display, Raleway } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const dmSerifDisplay = DM_Serif_Display({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const raleway = Raleway({
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
@@ -19,9 +25,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider afterSignInUrl="/" afterSignUpUrl="/">
+    <ClerkProvider
+      signInForceRedirectUrl="/"
+      signUpForceRedirectUrl="/"
+      afterSignOutUrl="/sign-in"
+    >
       <html lang="en">
-        <body className={`${geistSans.variable} antialiased`}>
+        <body className={`${dmSerifDisplay.variable} ${raleway.variable} antialiased`}>
           {children}
         </body>
       </html>

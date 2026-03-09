@@ -33,8 +33,10 @@ pnpm db:studio    # Open Prisma Studio
 pnpm db:seed      # Seed database
 
 # Testing
-pnpm test         # Run all tests
-pnpm test [file]  # Run a single test file
+pnpm test                # Run all Vitest unit tests
+pnpm test [file]         # Run a single test file
+pnpm test:e2e            # Run Playwright visual regression tests
+pnpm test:e2e:update     # Regenerate visual baseline screenshots
 ```
 
 ## Architecture
@@ -88,6 +90,61 @@ Core entities: `Patient`, `Clinician`, `Appointment`, `Invoice`, `Payment`, `Ses
 ### API Routes
 
 Use Next.js Route Handlers (`app/api/.../route.ts`) only when a browser client needs to call an endpoint directly (e.g., webhooks, file uploads, Clerk webhooks). Prefer Server Actions for form submissions and mutations from Client Components.
+
+## Git Flow
+
+### Branch Structure
+
+| Branch | Purpose |
+|---|---|
+| `main` | Production-ready code. Never commit directly. |
+| `develop` | Integration branch. All features merge here first. |
+| `feature/*` | New features — branch from `develop` |
+| `fix/*` | Bug fixes — branch from `develop` |
+| `hotfix/*` | Urgent production fixes — branch from `main`, PR into both `main` and `develop` |
+
+### Workflow for New Changes
+
+1. **Branch off `develop`**
+   ```bash
+   git checkout develop && git pull origin develop
+   git checkout -b feature/my-feature
+   ```
+
+2. **Work and commit** on your feature branch
+
+3. **Open a PR → `develop`** — CI (lint, typecheck, tests) must pass before merging
+
+4. **Open a PR → `main`** from `develop` when ready to release — CI must pass
+
+### Rules
+
+- Direct pushes to `main` and `develop` are blocked
+- All PRs require CI to pass before merge
+- Hotfixes branch from `main`, then get back-merged into `develop`
+
+### CI Pipeline
+
+GitHub Actions runs on every PR to `main` or `develop`:
+- `pnpm lint` — ESLint
+- `pnpm typecheck` — TypeScript type checking
+- `pnpm test` — Vitest unit tests
+- `pnpm test:e2e` — Playwright visual regression + auth acceptance tests
+
+### Before Opening a PR — Required Local Checks
+
+The pre-push hook enforces this automatically, but always verify manually before submitting:
+
+```bash
+pnpm lint --quiet && pnpm typecheck && pnpm test  # fast checks
+pnpm test:e2e                                      # e2e — requires dev server running
+```
+
+**Never open a PR without running the acceptance tests locally first.** The pre-push hook does this automatically:
+- `e2e/auth.spec.ts` — auth redirect acceptance tests (runs locally, platform-independent)
+- `e2e/visual.spec.ts` — visual regression tests (**CI-only** — baselines are Linux-generated; running them locally on macOS will produce false failures)
+
+If you add new visual snapshot tests, do **not** commit macOS baselines. CI will auto-create the correct Linux baselines on the first run via `--update-snapshots=missing`.
 
 ## Development Notes
 

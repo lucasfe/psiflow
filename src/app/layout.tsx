@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Space_Grotesk } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
-const jakartaSans = Plus_Jakarta_Sans({
+const spaceGrotesk = Space_Grotesk({
   variable: "--font-sans",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <ClerkProvider signInFallbackRedirectUrl="/" signUpFallbackRedirectUrl="/">
       <html lang="en">
-        <body className={`${jakartaSans.variable} antialiased`}>
+        <body className={`${spaceGrotesk.variable} antialiased`}>
           {children}
         </body>
       </html>

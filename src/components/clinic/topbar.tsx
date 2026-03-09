@@ -5,9 +5,12 @@ export async function Topbar() {
   const user = await currentUser();
 
   return (
-    <header className="flex h-14 items-center justify-between border-b px-6">
-      <p className="text-sm text-muted-foreground">
-        {user?.firstName} {user?.lastName}
+    <header className="flex h-14 items-center justify-between border-b border-white/40 bg-white/60 px-6 backdrop-blur-xl">
+      <p className="text-sm font-medium text-foreground/70">
+        Welcome back,{" "}
+        <span className="font-semibold text-foreground">
+          {user?.firstName ?? "there"}
+        </span>
       </p>
       <UserButton />
     </header>

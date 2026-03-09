@@ -67,10 +67,12 @@ jobs:
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
 
-      - name: Upload diff artifacts on failure
-        if: failure()
+      - name: Upload snapshot artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: visual-diffs
-          path: test-results/
+          name: visual-snapshots
+          path: |
+            test-results/
+            e2e/snapshots/
           retention-days: 7

@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Serif_Display, Raleway } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 
-const inter = Inter({
+const dmSerifDisplay = DM_Serif_Display({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: "400",
+});
+
+const raleway = Raleway({
   variable: "--font-sans",
   subsets: ["latin"],
 });
@@ -25,7 +31,7 @@ export default function RootLayout({
       afterSignOutUrl="/sign-in"
     >
       <html lang="en">
-        <body className={`${inter.variable} antialiased`}>
+        <body className={`${dmSerifDisplay.variable} ${raleway.variable} antialiased`}>
           {children}
         </body>
       </html>

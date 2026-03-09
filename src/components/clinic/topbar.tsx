@@ -5,7 +5,7 @@ export async function Topbar() {
   const user = await currentUser();
 
   return (
-    <header className="flex h-14 items-center justify-between border-b border-white/40 bg-white/60 px-6 backdrop-blur-xl">
+    <header className="flex h-14 items-center justify-between border-b border-border bg-card px-6">
       <p className="text-sm font-medium text-foreground/70">
         Welcome back,{" "}
         <span className="font-semibold text-foreground">

@@ -88,7 +88,7 @@ function StatCard({
   icon: React.ElementType;
 }) {
   return (
-    <Card className="bg-white/70 backdrop-blur-sm border-white/60 shadow-sm shadow-primary/5">
+    <Card className="bg-card border-border shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}

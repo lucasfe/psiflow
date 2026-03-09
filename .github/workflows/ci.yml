@@ -69,8 +69,9 @@ jobs:
       - name: Create missing Linux baselines
         # Playwright exits 1 when it writes new snapshots; continue so the
         # commit step always runs and the new files are committed.
+        # Use list reporter to avoid noisy ##[error] annotations on this step.
         continue-on-error: true
-        run: pnpm test:e2e --update-snapshots=missing
+        run: pnpm exec playwright test --update-snapshots=missing --reporter=list
         env:
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}

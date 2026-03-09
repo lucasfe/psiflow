@@ -18,31 +18,32 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 // ─── Sidebar ─────────────────────────────────────────────────────────────────
 
 describe("Sidebar — design tokens", () => {
-  it("has glassmorphism background", () => {
+  it("has solid background (no glassmorphism)", () => {
     const { container } = render(<Sidebar />);
     const aside = container.querySelector("aside");
-    expect(aside?.className).toContain("backdrop-blur-xl");
-    expect(aside?.className).toContain("bg-white/60");
+    expect(aside?.className).toContain("bg-sidebar");
+    expect(aside?.className).not.toContain("backdrop-blur");
   });
 
-  it("has transparent border", () => {
+  it("has semantic border", () => {
     const { container } = render(<Sidebar />);
     const aside = container.querySelector("aside");
-    expect(aside?.className).toContain("border-white/40");
+    expect(aside?.className).toContain("border-border");
   });
 
-  it("active nav item uses purple gradient", () => {
+  it("active nav item uses taupe left border", () => {
     render(<Sidebar />);
     const activeLink = screen.getByText("Dashboard").closest("a");
-    expect(activeLink?.className).toContain("bg-gradient-to-r");
-    expect(activeLink?.className).toContain("from-primary");
-    expect(activeLink?.className).toContain("text-white");
+    expect(activeLink?.className).toContain("border-l-2");
+    expect(activeLink?.className).toContain("border-primary");
+    expect(activeLink?.className).toContain("bg-accent");
   });
 
-  it("active nav item has purple shadow", () => {
+  it("active nav item has no gradient or shadow", () => {
     render(<Sidebar />);
     const activeLink = screen.getByText("Dashboard").closest("a");
-    expect(activeLink?.className).toContain("shadow-primary/20");
+    expect(activeLink?.className).not.toContain("bg-gradient-to-r");
+    expect(activeLink?.className).not.toContain("shadow-primary");
   });
 
   it("inactive nav items use muted text", () => {
@@ -56,10 +57,10 @@ describe("Sidebar — design tokens", () => {
     expect(screen.getByText("Ψ")).toBeInTheDocument();
   });
 
-  it("logo mark has purple gradient background", () => {
+  it("logo mark has solid primary background", () => {
     render(<Sidebar />);
     const logo = screen.getByText("Ψ").parentElement;
-    expect(logo?.className).toContain("from-primary");
+    expect(logo?.className).toContain("bg-primary");
   });
 });
 
@@ -90,7 +91,7 @@ describe("Badge — design tokens", () => {
 describe("Stat Card — design tokens", () => {
   function renderStatCard() {
     return render(
-      <Card className="bg-white/70 backdrop-blur-sm border-white/60 shadow-sm shadow-primary/5">
+      <Card className="bg-card border-border shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium text-muted-foreground">Patients</CardTitle>
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
@@ -104,17 +105,17 @@ describe("Stat Card — design tokens", () => {
     );
   }
 
-  it("has glass background", () => {
+  it("has solid card background (no glassmorphism)", () => {
     const { container } = renderStatCard();
     const card = container.firstChild as HTMLElement;
-    expect(card.className).toContain("bg-white/70");
-    expect(card.className).toContain("backdrop-blur-sm");
+    expect(card.className).toContain("bg-card");
+    expect(card.className).not.toContain("backdrop-blur");
   });
 
-  it("has transparent border", () => {
+  it("has semantic border", () => {
     const { container } = renderStatCard();
     const card = container.firstChild as HTMLElement;
-    expect(card.className).toContain("border-white/60");
+    expect(card.className).toContain("border-border");
   });
 
   it("icon wrapper uses primary tint", () => {
@@ -123,9 +124,9 @@ describe("Stat Card — design tokens", () => {
     expect(iconWrapper).not.toBeNull();
   });
 
-  it("has purple shadow", () => {
+  it("has shadow", () => {
     const { container } = renderStatCard();
     const card = container.firstChild as HTMLElement;
-    expect(card.className).toContain("shadow-primary/5");
+    expect(card.className).toContain("shadow-sm");
   });
 });

@@ -30,12 +30,13 @@ describe("Sidebar", () => {
   it("highlights the active route", () => {
     render(<Sidebar />);
     const dashboardLink = screen.getByText("Dashboard").closest("a");
-    expect(dashboardLink?.className).toContain("from-primary");
+    expect(dashboardLink?.className).toContain("border-l-2");
+    expect(dashboardLink?.className).toContain("border-primary");
   });
 
   it("does not highlight inactive routes", () => {
     render(<Sidebar />);
     const patientsLink = screen.getByText("Patients").closest("a");
-    expect(patientsLink?.className).not.toContain("from-primary");
+    expect(patientsLink?.className).not.toContain("border-l-2");
   });
 });

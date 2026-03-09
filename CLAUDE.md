@@ -129,6 +129,22 @@ GitHub Actions runs on every PR to `main` or `develop`:
 - `pnpm lint` — ESLint
 - `pnpm typecheck` — TypeScript type checking
 - `pnpm test` — Vitest unit tests
+- `pnpm test:e2e` — Playwright visual regression + auth acceptance tests
+
+### Before Opening a PR — Required Local Checks
+
+The pre-push hook enforces this automatically, but always verify manually before submitting:
+
+```bash
+pnpm lint --quiet && pnpm typecheck && pnpm test  # fast checks
+pnpm test:e2e                                      # e2e — requires dev server running
+```
+
+**Never open a PR without running the acceptance tests locally first.** The pre-push hook does this automatically:
+- `e2e/auth.spec.ts` — auth redirect acceptance tests (runs locally, platform-independent)
+- `e2e/visual.spec.ts` — visual regression tests (**CI-only** — baselines are Linux-generated; running them locally on macOS will produce false failures)
+
+If you add new visual snapshot tests, do **not** commit macOS baselines. CI will auto-create the correct Linux baselines on the first run via `--update-snapshots=missing`.
 
 ## Development Notes
 

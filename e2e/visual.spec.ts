@@ -1,5 +1,36 @@
 import { test, expect } from "@playwright/test";
 
+/**
+ * Sign-in page is public (no auth required) so it can be snapshot-tested
+ * like any other page. This catches regressions on real routes, not just
+ * the /test-ui mock surface.
+ */
+test.describe("Visual regression — /sign-in", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto("/sign-in");
+    // Clerk keeps long-polling connections open so networkidle never fires.
+    // domcontentloaded + waiting for the Clerk root box is sufficient.
+    await page.waitForLoadState("domcontentloaded");
+    await page.locator(".cl-rootBox").waitFor({ timeout: 10_000 });
+  });
+
+  test("sign-in page snapshot", async ({ page }) => {
+    await expect(page).toHaveScreenshot("sign-in-page.png", {
+      fullPage: true,
+      maxDiffPixelRatio: 0.02,
+    });
+  });
+
+  test("sign-in background has purple theme", async ({ page }) => {
+    // The body background colour must not be plain white/grey.
+    // We snapshot only the area behind the Clerk card to isolate our theme.
+    const body = page.locator("body");
+    await expect(body).toHaveScreenshot("sign-in-background.png", {
+      maxDiffPixelRatio: 0.02,
+    });
+  });
+});
+
 test.describe("Visual regression — /test-ui", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/test-ui");

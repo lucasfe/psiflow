@@ -104,7 +104,7 @@ jobs:
           git config user.name "GitHub Actions"
           git add e2e/snapshots/
           git diff --staged --quiet && echo "No new baselines." || \
-            git commit -m "chore: add missing Linux visual regression baselines [skip ci]" && \
+            git commit -m "chore: add missing Linux visual regression baselines" && \
             git push origin HEAD:refs/heads/${{ github.head_ref }}
 
       - name: Run visual regression tests

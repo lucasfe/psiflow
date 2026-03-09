@@ -45,6 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: ${{ github.head_ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: pnpm/action-setup@v4
@@ -77,4 +78,5 @@ jobs:
           git config user.name "GitHub Actions"
           git add e2e/snapshots/
           git diff --staged --quiet && echo "Baselines unchanged." || \
-            git commit -m "chore: update visual regression baselines (linux) [skip ci]" && git push origin HEAD
+            git commit -m "chore: update visual regression baselines (linux) [skip ci]" && \
+            git push origin HEAD:refs/heads/${{ github.head_ref }}

@@ -24,10 +24,20 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+/**
+ * RootPage is the role-based router that all sign-ins land on first
+ * (ClerkProvider.signInForceRedirectUrl="/"). It must redirect every
+ * possible auth state to the right destination so no user ever gets stuck.
+ */
 describe("RootPage redirect logic", () => {
   it("redirects unauthenticated users to /sign-in", async () => {
     mockAuth({ userId: undefined });
     await expect(RootPage()).rejects.toThrow("REDIRECT:/sign-in");
+  });
+
+  it("redirects authenticated users with no role to /no-role", async () => {
+    mockAuth({ userId: "user_1" });
+    await expect(RootPage()).rejects.toThrow("REDIRECT:/no-role");
   });
 
   it("redirects PATIENT to /portal", async () => {

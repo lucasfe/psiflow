@@ -10,6 +10,10 @@ export default async function RootPage() {
 
   const role = (sessionClaims?.metadata as { role?: string })?.role;
 
+  if (!role) {
+    redirect("/no-role");
+  }
+
   if (role === "PATIENT") {
     redirect("/portal");
   }

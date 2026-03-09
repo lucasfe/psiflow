@@ -8,8 +8,9 @@ import { test, expect } from "@playwright/test";
 test.describe("Visual regression — /sign-in", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/sign-in");
-    await page.waitForLoadState("networkidle");
-    // Wait for Clerk to finish rendering its component
+    // Clerk keeps long-polling connections open so networkidle never fires.
+    // domcontentloaded + waiting for the Clerk root box is sufficient.
+    await page.waitForLoadState("domcontentloaded");
     await page.locator(".cl-rootBox").waitFor({ timeout: 10_000 });
   });
 

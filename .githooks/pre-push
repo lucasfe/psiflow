@@ -1,0 +1,10 @@
+#!/bin/sh
+set -e
+
+echo "⏳ Checking lockfile is up to date..."
+pnpm install --frozen-lockfile --silent
+echo "✅ Lockfile OK"
+
+echo "⏳ Running lint, typecheck, and tests..."
+pnpm lint --quiet && pnpm typecheck && pnpm test
+echo "✅ All checks passed"

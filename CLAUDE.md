@@ -33,8 +33,10 @@ pnpm db:studio    # Open Prisma Studio
 pnpm db:seed      # Seed database
 
 # Testing
-pnpm test         # Run all tests
-pnpm test [file]  # Run a single test file
+pnpm test                # Run all Vitest unit tests
+pnpm test [file]         # Run a single test file
+pnpm test:e2e            # Run Playwright visual regression tests
+pnpm test:e2e:update     # Regenerate visual baseline screenshots
 ```
 
 ## Architecture

@@ -140,13 +140,11 @@ pnpm lint --quiet && pnpm typecheck && pnpm test  # fast checks
 pnpm test:e2e                                      # e2e — requires dev server running
 ```
 
-**Never open a PR without running `pnpm test:e2e` locally first.** The CI visual job detects regressions against Linux-generated baselines; local e2e runs catch issues before they hit CI.
+**Never open a PR without running the acceptance tests locally first.** The pre-push hook does this automatically:
+- `e2e/auth.spec.ts` — auth redirect acceptance tests (runs locally, platform-independent)
+- `e2e/visual.spec.ts` — visual regression tests (**CI-only** — baselines are Linux-generated; running them locally on macOS will produce false failures)
 
-If you add new visual snapshot tests, generate baselines locally first:
-```bash
-pnpm test:e2e:update  # regenerates all baselines (macOS)
-```
-CI auto-creates Linux baselines for any missing snapshots via `--update-snapshots=missing`.
+If you add new visual snapshot tests, do **not** commit macOS baselines. CI will auto-create the correct Linux baselines on the first run via `--update-snapshots=missing`.
 
 ## Development Notes
 
